@@ -1,0 +1,56 @@
+// SQLite by default. To move to Postgres: change provider below, swap the adapter in lib/db.ts
+// for @prisma/adapter-pg, and point DATABASE_URL at the Postgres instance.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model AccountConfig {
+  id              String    @id @default("default")
+  mpan            String
+  meterSerial     String
+  tariffCode      String
+  svtRatePence    Float // flat baseline unit rate, p/kWh inc VAT
+  standingChargeP Float // p/day, applied to both tariffs
+  mode            String // "live" | "mock"
+  lastSyncedAt    DateTime?
+  updatedAt       DateTime  @updatedAt
+}
+
+model ConsumptionRecord {
+  id             String   @id @default(cuid())
+  meterSerial    String
+  intervalStart  DateTime
+  intervalEnd    DateTime
+  consumptionKwh Float
+
+  @@unique([meterSerial, intervalStart])
+}
+
+model TariffRate {
+  id          String   @id @default(cuid())
+  tariffCode  String
+  validFrom   DateTime
+  validTo     DateTime
+  valueIncVat Float // p/kWh
+
+  @@unique([tariffCode, validFrom])
+}
+
+// One row per UK calendar day, rebuilt on every sync.
+model CachedCalculation {
+  date          String   @id // YYYY-MM-DD, Europe/London
+  totalKwh      Float
+  agileCostP    Float
+  svtCostP      Float
+  cheapKwh      Float
+  plungeKwh     Float
+  negativeKwh   Float
+  plungeSavingP Float
+  updatedAt     DateTime @updatedAt
+}

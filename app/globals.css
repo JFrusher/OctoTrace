@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+/* Dark-first palette (slate + status green). Rate-band colours are shared by the chart and heatmap. */
+@theme {
+  --color-bg: #0b1120;
+  --color-card: #111a2e;
+  --color-muted: #1b2540;
+  --color-border: #26314d;
+  --color-fg: #f1f5f9;
+  --color-fg-muted: #94a3b8;
+  --color-accent: #22c55e;
+  --color-negative: #38bdf8;
+  --color-cheap: #22c55e;
+  --color-normal: #64748b;
+  --color-peak: #ef4444;
+  --color-rate-line: #fbbf24;
+  --font-sans: var(--font-fira-sans);
+  --font-mono: var(--font-fira-code);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
